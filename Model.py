@@ -1,6 +1,6 @@
-from typing import Iterable
+from typing import Iterable, List
 
-DAYS = set('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat')
+DAYS = set(('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))
 
 class Time:
     def __init__(self, hour: int, minute: int):
@@ -35,9 +35,9 @@ class Schedule:
     def removeEvent(self, eventName: str):
         self.events = [e for e in self.events if e.name != eventName]
 
-    def __getitem__(self, day):
+    def __getitem__(self, day: str):
         if day not in DAYS:
-            raise KeyError('Schedule must be accessed with a day, received ', day)
+            raise KeyError('Schedule must be accessed with a day, received ' + day)
         day_events = (e for e in self.events if day in e.days)
         return sorted(day_events, key=lambda e: e.fromTime.hour*60 + e.fromTime.minute)
 
