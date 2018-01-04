@@ -1,5 +1,7 @@
 from flask_pymongo import PyMongo
 
+from Model import Time, Event, Schedule
+
 DB_NAME = 'schedule_practice'
 DB_USERNAME = 'admin'
 DB_PASSWORD = 'admin'
@@ -14,17 +16,25 @@ class DataAccessor:
 
         print('Connected to DB!')
 
+    """
+    Read Operations
+    """
+    def getSchedule(self, scheduleOwner):
+        res = self.__mongo.db.schedule.find_one({'owner': scheduleOwner})
+        if res is None:
+            return None
+        return Schedule.fromdict(res)
+
+    """
+    Write Operations
+    """
+
     # Insert a document (dict) into specified collection
     def insert(self, collection, document):
         if isinstance(document, dict):
             self.__mongo.db[collection].insert_one(document)
         elif isinstance(document, list) or isinstance(document, tuple):
             self.__mongo.db[collection].insert_many(document)
-
-    # Returns all documents that satisfy specified selector (dict)
-    def get(self, collection, selector):
-        res = self.__mongo.db[collection].find_one(selector)
-        return res
 
     # Updates documents that satisfied the selector with the given updated document
     def update(self, collection, selector, updated_document):
@@ -35,6 +45,8 @@ class DataAccessor:
     def remove(self, collection, selector):
         print("REM")
         self.__mongo.db[collection].delete_many(selector)
+
+
 
 
 
