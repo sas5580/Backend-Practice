@@ -38,29 +38,34 @@ class DataAccessor:
     Write Operations
     """
 
-    # Insert a document (dict) into specified collection
     def __insert(self, collection, document):
         if isinstance(document, dict):
             self.__mongo.db[collection].insert_one(document)
         elif isinstance(document, list) or isinstance(document, tuple):
             self.__mongo.db[collection].insert_many(document)
 
-    # Updates documents that satisfied the selector with the given updated document
     def __update(self, collection, selector, updated_document):
-        print("UPDATE")
         self.__mongo.db[collection].update_many(selector, {'$set': updated_document})
 
-    # Removes documents that match the given selector
     def __remove(self, collection, selector):
-        print("REM")
         self.__mongo.db[collection].delete_many(selector)
-
 
     def insertEvent(self, event: Event):
         self.__insert('event', event.serialize())
 
     def removeEvent(self, eventName: str):
         self.__remove('event', {'name': eventName})
+
+    def insertNewSchedule(self, owner: str):
+        self.__insert('schedule', {'owner': owner, 'events': []})
+
+    def updateSchedule(self, newSched: Schedule):
+        print([e.name for e in newSched.events])
+        self.__update('schedule', {'owner': newSched.owner}, {'events': [e.name for e in newSched.events]})
+
+    def removeSchedule(self, owner: str):
+        self.__remove('schedule', {'owner': owner})
+
 
 
 
