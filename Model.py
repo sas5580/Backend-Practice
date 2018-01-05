@@ -36,7 +36,7 @@ class Event:
         days = event_dict['days']
         fromTime = Time.fromdict(event_dict['fromTime'])
         toTime = Time.fromdict(event_dict['toTime'])
-        description = event_dict['description']
+        description = event_dict['description'] if 'description' in event_dict else ''
         return cls(name, days, fromTime, toTime, description)
 
     def serialize(self):
