@@ -22,13 +22,13 @@ class DataAccessor:
     def __find(self, collection, selector):
         return self.__mongo.db[collection].find_one(selector)
 
-    def getEvent(self, event_name: str) -> Event:
+    def get_event(self, event_name: str) -> Event:
         res = self.__find('event', {'name': event_name})
         if res is None:
             return None
         return Event.fromdict(res)
 
-    def getSchedule(self, schedule_owner: str) -> Schedule:
+    def get_schedule(self, schedule_owner: str) -> Schedule:
         res = self.__find('schedule', {'owner': schedule_owner})
         if res is None:
             return None
@@ -50,23 +50,22 @@ class DataAccessor:
     def __remove(self, collection, selector):
         self.__mongo.db[collection].delete_many(selector)
 
-    def insertEvent(self, event: Event):
+    def insert_event(self, event: Event):
         self.__insert('event', event.serialize())
 
     def update_event(self, event: Event):
         self.__update('event', {'name': event.name}, event.serialize())
 
-    def removeEvent(self, eventName: str):
+    def remove_event(self, eventName: str):
         self.__remove('event', {'name': eventName})
 
-    def insertNewSchedule(self, owner: str):
+    def insert_new_schedule(self, owner: str):
         self.__insert('schedule', {'owner': owner, 'events': []})
 
-    def updateSchedule(self, newSched: Schedule):
-        print([e.name for e in newSched.events])
-        self.__update('schedule', {'owner': newSched.owner}, {'events': [e.name for e in newSched.events]})
+    def update_schedule(self, new_sched: Schedule):
+        self.__update('schedule', {'owner': new_sched.owner}, {'events': [e.name for e in new_sched.events]})
 
-    def removeSchedule(self, owner: str):
+    def remove_schedule(self, owner: str):
         self.__remove('schedule', {'owner': owner})
 
 

@@ -13,48 +13,48 @@ class Time:
     def fromdict(cls, time_dict: Dict[str, int]):
         return cls(time_dict['hour'], time_dict['minute'])
 
-    def inSeconds(self):
+    def in_seconds(self):
         return self.hour*60 + self.minute
 
     def __str__(self):
         return '%02d:%02d' % (self.hour, self.minute)
 
 class Event:
-    def __init__(self, name: str, days: Iterable[str], fromTime: Time, toTime: Time, description=''):
+    def __init__(self, name: str, days: Iterable[str], from_time: Time, to_time: Time, description=''):
         assert set(days).issubset(DAYS)
-        assert fromTime.inSeconds() <= toTime.inSeconds()
+        assert from_time.in_seconds() <= to_time.in_seconds()
 
         self.name = name
         self.days = days
-        self.fromTime = fromTime
-        self.toTime = toTime
+        self.from_time = from_time
+        self.to_time = to_time
         self.description = description
 
     @classmethod
     def fromdict(cls, event_dict):
         name = event_dict['name']
         days = event_dict['days']
-        fromTime = Time.fromdict(event_dict['fromTime'])
-        toTime = Time.fromdict(event_dict['toTime'])
+        from_time = Time.fromdict(event_dict['from_time'])
+        to_time = Time.fromdict(event_dict['to_time'])
         description = event_dict['description'] if 'description' in event_dict else ''
-        return cls(name, days, fromTime, toTime, description)
+        return cls(name, days, from_time, to_time, description)
 
-    def update(self, newName=None, newDays=None, newFromTime=None, newToTime=None, newDescription=None):
-        if newName is not None:
-            self.name = newName
-        if newDays is not None:
-            self.days = newDays
-        if newFromTime is not None:
-            self.fromTime = newFromTime
-        if newToTime is not None:
-            self.toTime = newToTime
-        if newDescription is not None:
-            self.description = newDescription
+    def update(self, new_name=None, new_days=None, new_from_time=None, new_to_time=None, new_description=None):
+        if new_name is not None:
+            self.name = new_name
+        if new_days is not None:
+            self.days = new_days
+        if new_from_time is not None:
+            self.from_time = new_from_time
+        if new_to_time is not None:
+            self.to_time = new_to_time
+        if new_description is not None:
+            self.description = new_description
 
     def serialize(self):
         event_dict = deepcopy(vars(self))
-        event_dict['fromTime'] = vars(event_dict['fromTime'])
-        event_dict['toTime'] = vars(event_dict['toTime'])
+        event_dict['from_time'] = vars(event_dict['from_time'])
+        event_dict['to_time'] = vars(event_dict['to_time'])
         return event_dict
 
 class Schedule:
@@ -83,5 +83,5 @@ class Schedule:
         if day not in DAYS:
             raise KeyError('Schedule must be accessed with a day, received ' + day)
         day_events = (e for e in self.events if day in e.days)
-        return sorted(day_events, key=lambda e: e.fromTime.inSeconds())
+        return sorted(day_events, key=lambda e: e.fromTime.in_seconds())
 

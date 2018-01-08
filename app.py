@@ -10,7 +10,7 @@ api = Api(app)
 dao = DataAccessor(app)
 
 def get_event_or_abort(event_name):
-    event = dao.getEvent(event_name)
+    event = dao.get_event(event_name)
     if event is None:
         abort(404, message='Event {} not found'.format(event_name))
     return event
@@ -26,7 +26,7 @@ class EventAPI(Resource):
         data = json.loads(request.data)
         data['name'] = name
         event = Event.fromdict(data)
-        dao.insertEvent(event)
+        dao.insert_event(event)
         return name, 201
 
     # Update exisiting event based on args
@@ -34,24 +34,24 @@ class EventAPI(Resource):
         data = json.loads(request.data)
         event = get_event_or_abort(name)
         event.update(
-            newName=data['name'] if 'name' in data else None,
-            newDays=data['days'] if 'days' in data else None,
-            newFromTime=data['fromTime'] if 'fromTime' in data else None,
-            newToTime=data['toTime'] if 'toTime' in data else None,
-            newDescription=data['description'] if 'description' in data else None
+            new_name=data['name'] if 'name' in data else None,
+            new_days=data['days'] if 'days' in data else None,
+            new_from_time=data['from_time'] if 'from_time' in data else None,
+            new_to_time=data['to_time'] if 'to_time' in data else None,
+            new_description=data['description'] if 'description' in data else None
         )
         dao.update_event(event)
         return name, 201
 
     # Deletes the named event
     def delete(self, name):
-        dao.removeEvent(name)
+        dao.remove_event(name)
         return name, 204
 
 class ScheduleAPI(Resource):
     # Return entire schedule with details info on events
     def get(self, owner):
-        sched = dao.getSchedule(owner)
+        sched = dao.get_schedule(owner)
         if sched is None:
            abort(404, message='Schedule {} not found'.format(owner))
         return sched.serialize()
@@ -59,24 +59,24 @@ class ScheduleAPI(Resource):
     # Add or remove an event to/from a schedule based on args
     def put(self, owner):
         data = json.loads(request.data)
-        event = dao.getEvent(data['event_name'])
+        event = dao.get_event(data['event_name'])
         if event is None:
             abort(404, message='Cannot add/remove {} to/from {}\'s schedule as the event does not exist'.format(data['name'], owner))
 
-        sched = dao.getSchedule(owner)
+        sched = dao.get_schedule(owner)
         if sched is None:
             sched = Schedule(owner, [])
-            dao.insertNewSchedule(owner)
+            dao.insert_new_schedule(owner)
 
         if data['action'] == 'ADD':
             sched.addEvent(event)
         elif data['action'] == 'REMOVE':
             sched.removeEvent(event.name)
 
-        dao.updateSchedule(sched)
+        dao.update_schedule(sched)
 
         return owner, 201
-
+        
 api.add_resource(EventAPI, '/event/<name>/')
 api.add_resource(ScheduleAPI, '/schedule/<owner>/')
 
