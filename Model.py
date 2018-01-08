@@ -3,6 +3,9 @@ from copy import deepcopy
 
 DAYS = set(('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))
 
+
+# TODO: as stated within the APP .. there are multiple resource models within this file, they should be broken apart into
+# their respective class name files (ie: time.py)
 class Time:
     def __init__(self, hour: int, minute: int):
         assert 0 <= minute < 60 and 0 <= hour < 24
@@ -18,7 +21,9 @@ class Time:
 
     def __str__(self):
         return '%02d:%02d' % (self.hour, self.minute)
-
+    
+# TODO: as stated within the APP .. there are multiple resource models within this file, they should be broken apart into
+# their respective class name files (ie: event.py)
 class Event:
     def __init__(self, name: str, days: Iterable[str], from_time: Time, to_time: Time, description=''):
         assert set(days).issubset(DAYS)
@@ -39,6 +44,9 @@ class Event:
         description = event_dict['description'] if 'description' in event_dict else ''
         return cls(name, days, from_time, to_time, description)
 
+    # TODO: this method should implement the update method within the DAO and only handle updating the entity in the DB
+    # using the DAO class
+    # TODO: if you need to update a class variable in python it is simply done as Event.name = 'NEW NAME'
     def update(self, new_name=None, new_days=None, new_from_time=None, new_to_time=None, new_description=None):
         if new_name is not None:
             self.name = new_name
@@ -57,6 +65,8 @@ class Event:
         event_dict['to_time'] = vars(event_dict['to_time'])
         return event_dict
 
+# TODO: as stated within the app.. this is a different resources model and should exist within its own class file named
+# schedule.py
 class Schedule:
     def __init__(self, owner: str, events: List[Event]=[]):
         self.owner = owner
