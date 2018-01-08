@@ -44,8 +44,9 @@ class Event:
         return cls.fromdict(event_dict)
 
     @classmethod
-    def create(cls, event_dict):
+    def create(cls, event_name, event_dict):
         try:
+            event_dict['name'] = event_name
             event = cls.fromdict(event_dict)
             cls.dao.create(event)
             return event
