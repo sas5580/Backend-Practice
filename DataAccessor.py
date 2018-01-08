@@ -53,6 +53,9 @@ class DataAccessor:
     def insertEvent(self, event: Event):
         self.__insert('event', event.serialize())
 
+    def update_event(self, event: Event):
+        self.__update('event', {'name': event.name}, event.serialize())
+
     def removeEvent(self, eventName: str):
         self.__remove('event', {'name': eventName})
 

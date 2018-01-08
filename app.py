@@ -9,12 +9,16 @@ app = Flask(__name__)
 api = Api(app)
 dao = DataAccessor(app)
 
+def get_event_or_abort(event_name):
+    event = dao.getEvent(event_name)
+    if event is None:
+        abort(404, message='Event {} not found'.format(event_name))
+    return event
+
 class EventAPI(Resource):
     # Returns event details in JSON format
     def get(self, name):
-        event = dao.getEvent(name)
-        if event is None:
-            abort(404, message='Event {} not found'.format(name))
+        event = get_event_or_abort(name)
         return event.serialize()
 
     # Creates a new event based on args and name
@@ -23,6 +27,20 @@ class EventAPI(Resource):
         data['name'] = name
         event = Event.fromdict(data)
         dao.insertEvent(event)
+        return name, 201
+
+    # Update exisiting event based on args
+    def put(self, name):
+        data = json.loads(request.data)
+        event = get_event_or_abort(name)
+        event.update(
+            newName=data['name'] if 'name' in data else None,
+            newDays=data['days'] if 'days' in data else None,
+            newFromTime=data['fromTime'] if 'fromTime' in data else None,
+            newToTime=data['toTime'] if 'toTime' in data else None,
+            newDescription=data['description'] if 'description' in data else None
+        )
+        dao.update_event(event)
         return name, 201
 
     # Deletes the named event
@@ -48,7 +66,6 @@ class ScheduleAPI(Resource):
         sched = dao.getSchedule(owner)
         if sched is None:
             sched = Schedule(owner, [])
-            print(sched.serialize())
             dao.insertNewSchedule(owner)
 
         if data['action'] == 'ADD':

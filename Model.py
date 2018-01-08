@@ -39,6 +39,18 @@ class Event:
         description = event_dict['description'] if 'description' in event_dict else ''
         return cls(name, days, fromTime, toTime, description)
 
+    def update(self, newName=None, newDays=None, newFromTime=None, newToTime=None, newDescription=None):
+        if newName is not None:
+            self.name = newName
+        if newDays is not None:
+            self.days = newDays
+        if newFromTime is not None:
+            self.fromTime = newFromTime
+        if newToTime is not None:
+            self.toTime = newToTime
+        if newDescription is not None:
+            self.description = newDescription
+
     def serialize(self):
         event_dict = deepcopy(vars(self))
         event_dict['fromTime'] = vars(event_dict['fromTime'])
@@ -61,19 +73,6 @@ class Schedule:
 
     def removeEvent(self, eventName: str):
         self.events = [e for e in self.events if e.name != eventName]
-
-    def updateEvent(self, eventName: str, newName=None, newDays=None, newFromTime=None, newToTime=None, newDescription=None):
-        event = next(filter(lambda e: e.name == eventName, self.events))
-        if newName is not None:
-            event.name = newName
-        if newDays is not None:
-            event.days = newDays
-        if newFromTime is not None:
-            event.fromTime = newFromTime
-        if newToTime is not None:
-            event.toTime = newToTime
-        if newDescription is not None:
-            event.description = newDescription
 
     def serialize(self):
         sched_dict = {'owner': self.owner}
