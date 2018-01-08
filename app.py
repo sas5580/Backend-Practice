@@ -108,8 +108,3 @@ class ScheduleAPI(Resource):
         
 api.add_resource(EventAPI, '/event/<name>/')
 api.add_resource(ScheduleAPI, '/schedule/<owner>/')
-
-
-# TODO: what is this for?
-if __name__ == '__main__':
-    app.run(debug=True)
