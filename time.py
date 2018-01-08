@@ -2,7 +2,8 @@ from typing import Dict
 
 class Time:
     def __init__(self, hour: int, minute: int):
-        assert 0 <= minute < 60 and 0 <= hour < 24
+        if not (0 <= minute < 60 and 0 <= hour < 24):
+            raise ValueError('Invalid hour or minute value')
         self.hour = hour
         self.minute = minute
 
