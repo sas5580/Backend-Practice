@@ -32,7 +32,7 @@ class DataAccessor:
         res = self.__find('schedule', {'owner': schedule_owner})
         if res is None:
             return None
-        return Schedule(schedule_owner, [self.getEvent(e_name) for e_name in res['events']])
+        return Schedule(schedule_owner, [self.get_event(e_name) for e_name in res['events']])
 
     """
     Write Operations
