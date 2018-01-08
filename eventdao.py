@@ -2,13 +2,13 @@ from dao import DAO
 
 class EventDAO(DAO):
     def get(self, event_name):
-        return #self._get_by_params('event', {'name': event_name})
+        return self._get_by_params('event', {'name': event_name})
 
     def create(self, event):
-        return
+        return self._save('event', event.serialize())
 
     def update(self, event):
-        return
+        return self._update('event', {'name': event.name}, event.serialize())
 
     def delete(self, event_name):
-        return
+        return self._delete('event', {'name': event_name})

@@ -1,7 +1,7 @@
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 
-from Model import Event, Schedule
+from app import app
 
 DB_NAME = 'schedule_practice'
 DB_USERNAME = 'admin'
@@ -37,16 +37,20 @@ class DAO:
     """
 
     def _save(self, collection, document):
+        res = None
         if isinstance(document, dict):
-            self.__mongo.db[collection].insert_one(document)
+            res = self.__mongo.db[collection].insert_one(document)
         elif isinstance(document, list) or isinstance(document, tuple):
-            self.__mongo.db[collection].insert_many(document)
+            res = self.__mongo.db[collection].insert_many(document)
+        return res.acknowledged if res is not None else False
 
     def _update(self, collection, selector, updated_document):
-        self.__mongo.db[collection].update_many(selector, {'$set': updated_document})
+        res = self.__mongo.db[collection].update_many(selector, {'$set': updated_document})
+        return res.acknowledged
 
     def _delete(self, collection, selector):
-        self.__mongo.db[collection].delete_many(selector)
+        res = self.__mongo.db[collection].delete_many(selector)
+        return res.acknowledged
 
 
 
