@@ -1,13 +1,11 @@
+import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 DB_NAME = 'schedule_practice'
-DB_USERNAME = 'admin'
-DB_PASSWORD = 'admin'
-DB_URI = 'mongodb://%s:%s@ds239387.mlab.com:39387/schedule_practice' % (DB_USERNAME, DB_PASSWORD)
 
 class DAO:
-    __db = MongoClient(DB_URI)[DB_NAME]
+    __db = MongoClient(os.environ['DB_PORT_27017_TCP_ADDR'], 27017)[DB_NAME]
 
     """
     Read Operations
