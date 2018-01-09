@@ -32,7 +32,7 @@ class Schedule:
 
     def remove_event(self, event_name):
         e_id, event = Event.get(event_name)
-        self.events.remove(str(e_id))
+        self.events.discard(str(e_id))
         self.dao.update(self)
         return self
 
