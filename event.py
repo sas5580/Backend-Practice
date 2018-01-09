@@ -1,40 +1,30 @@
-from typing import Iterable
 from copy import deepcopy
+from datetime import time
 from flask_restful import abort
 
-from timemodel import Time
 from eventdao import EventDAO
 
-
 DAYS = set(('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))
+
+event = Model()
+
+return event.__dict__
 
 class Event:
     dao = EventDAO()
 
-    def __init__(self, name: str, days: Iterable[str], from_time: Time, to_time: Time, description=''):
-        assert set(days).issubset(DAYS)
-        assert from_time.in_seconds() <= to_time.in_seconds()
+    def __init__(self, documnet: dict):
 
-        self.name = name
-        self.days = set(days)
-        self.from_time = from_time
-        self.to_time = to_time
-        self.description = description
-
-    @classmethod
-    def fromdict(cls, event_dict):
-        name = event_dict['name']
-        days = event_dict['days']
-        from_time = Time.fromdict(event_dict['from_time'])
-        to_time = Time.fromdict(event_dict['to_time'])
-        description = event_dict['description'] if 'description' in event_dict else ''
-        return cls(name, days, from_time, to_time, description)
+        self.name = documnet['name'] if 'name' in documnet else None
+        self.days = documnet['days'] if 'days' in documnet else None
+        self.from_time = time(**documnet['from_time']) if 'from_time' in documnet else None
+        self.to_time = time(**documnet['to_time']) if 'to_time' in documnet else None
+        self.description = documnet['description'] if 'description' in documnet else None
 
     def serialize(self):
-        event_dict = deepcopy(vars(self))
-        event_dict['days'] = list(event_dict['days'])
-        event_dict['from_time'] = vars(event_dict['from_time'])
-        event_dict['to_time'] = vars(event_dict['to_time'])
+        event_dict = deepcopy(self.__dict__)
+        event_dict['from_time'] = event_dict['from_time'].isoformat()
+        event_dict['to_time'] = event_dict['to_time'].isoformat()
         return event_dict
 
     @classmethod
@@ -45,37 +35,14 @@ class Event:
         return cls.fromdict(event_dict)
 
     @classmethod
-    def create(cls, event_name, event_dict):
-        try:
-            event_dict['name'] = event_name
-            event = cls.fromdict(event_dict)
-            cls.dao.create(event)
-            return event
-        except KeyError:
-            abort(404, message='Invalid args to create event')
+    def create(cls, event_dict):
+        event = cls(event_dict)
+        cls.dao.create(event)
+        return event
 
     def update(self, event_dict):
-        if 'days' in event_dict:
-            if not set(event_dict['days']).issubset(DAYS):
-               abort(404, message='Invalid day string in days')
-            self.days = event_dict['days']
-
-        if 'from_time' in event_dict:
-            try:
-                new_time = Time.fromdict(event_dict['from_time'])
-                self.from_time = new_time
-            except ValueError:
-                abort(404, message='Invalid from time')
-
-        if 'to_time' in event_dict:
-            try:
-                new_time = Time.fromdict(event_dict['to_time'])
-                self.to_time = new_time
-            except ValueError:
-                abort(404, message='Invalid to time')
-
-        if 'description' in event_dict:
-            self.description = event_dict['description']
+        for prop, val in event_dict.iteritems():
+            self.__dict__[prop] = val
 
         self.dao.update(self)
 
