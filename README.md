@@ -10,7 +10,7 @@ A simple API to manage a weekly schedule of custom events
 
 **POST**: Create a new event
 Expected args:
-```json
+```javascript
 {
     "days": [
         <string>,   // One or many of Sun, Mon, Tue, Wed, Thu, Fri, Sat
@@ -30,7 +30,7 @@ Expected args:
 
 **PUT**: Update an existing event
 Expected args: (Only include fields to update)
-```json
+```javascript
 {
     "days": [
         <string>,   // One or many of Sun, Mon, Tue, Wed, Thu, Fri, Sat
@@ -57,7 +57,7 @@ Expected args: (Only include fields to update)
 **GET**: Returns full schedule
 
 **PUT**: Add or remove an event to/from the owner's schedule
-```json
+```javascript
 {
     "event_name": <string>,
     "action": "ADD" or "REMOVE"
