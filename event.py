@@ -13,7 +13,6 @@ class Event:
     dao = EventDAO()
 
     def __init__(self, documnet: dict):
-
         self.name = documnet['name'] if 'name' in documnet else None
         self.days = documnet['days'] if 'days' in documnet else None
         self.from_time = documnet['from_time'] if 'from_time' in documnet else None
@@ -31,6 +30,15 @@ class Event:
         event_dict = cls.dao.get(event_name)
         if event_dict is None:
             abort(404, message='Event {} not found'.format(event_name))
+        event_dict['from_time'] = read_time(event_dict['from_time'])
+        event_dict['to_time'] = read_time(event_dict['to_time'])
+        return event_dict['_id'], cls(event_dict)
+
+    @classmethod
+    def get_by_id(cls, id_str):
+        event_dict = cls.dao.get_by_id(id_str)
+        if event_dict is None:
+            abort(404, message='Event with id "{}" not found'.format(id_str))
         event_dict['from_time'] = read_time(event_dict['from_time'])
         event_dict['to_time'] = read_time(event_dict['to_time'])
         return cls(event_dict)

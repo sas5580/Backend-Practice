@@ -1,6 +1,6 @@
 import json
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, abort
 
 from schedule import Schedule
 
@@ -11,6 +11,9 @@ class ScheduleAPI(Resource):
     # Return entire schedule with details info on events
     def get(self, owner):
         sched = Schedule.get(owner)
+        print(sched.events)
+        if sched is None:
+            abort(404, message='No schedule with owner {} exists'.format(owner))
         return sched.serialize()
 
     # Add or remove an event to/from a schedule based on args
@@ -19,6 +22,8 @@ class ScheduleAPI(Resource):
         if 'event_name' not in data:
             abort(404, message='"event_name" field is required to update shcedule')
         sched = Schedule.get(owner)
+        if sched is None:
+            sched = Schedule({'owner': owner})
         if data['action'] == 'ADD':
             sched.add_event(data['event_name'])
         elif data['action'] == 'REMOVE':

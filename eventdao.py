@@ -4,6 +4,9 @@ class EventDAO(DAO):
     def get(self, event_name):
         return self._get_one_by_params('event', {'name': event_name})
 
+    def get_by_id(self, id_str):
+        return self._get_by_id('event', id_str)
+
     def create(self, event):
         return self._save_one('event', event.serialize())
 

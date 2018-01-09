@@ -33,8 +33,8 @@ class DAO:
         res = self.__db[collection].insert_many(documents_list)
         return res.acknowledged
 
-    def _update(self, collection, selector, updated_document):
-        res = self.__db[collection].update_many(selector, {'$set': updated_document})
+    def _update(self, collection, selector, updated_document, upsert=False):
+        res = self.__db[collection].update_many(selector, {'$set': updated_document}, upsert=upsert)
         return res.acknowledged
 
     def _delete(self, collection, selector):

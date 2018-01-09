@@ -18,7 +18,7 @@ def validate_days(days):
 class EventAPI(Resource):
     # Returns event details in JSON format
     def get(self, name):
-        event = Event.get(name)
+        e_id, event = Event.get(name)
         return event.serialize()
 
     # Creates a new event based on args and name
@@ -38,7 +38,7 @@ class EventAPI(Resource):
 
     # Update exisiting event based on args
     def put(self, name):
-        event = Event.get(name)
+        e_id, event = Event.get(name)
         update_dict = read_args(request)
 
         try:
