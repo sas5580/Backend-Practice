@@ -2,7 +2,7 @@
 
 A simple API to manage a weekly schedule of custom events
 
-##Events
+## Events
 
 **URI**: `/event/<event_name>`
 
@@ -50,7 +50,7 @@ Expected args: (Only include fields to update)
 
 **DELETE**: Delete the named event
 
-##Schedule
+## Schedule
 
 **URI**: `/schedule/<owner>`
 
