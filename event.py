@@ -2,7 +2,7 @@ from typing import Iterable
 from copy import deepcopy
 from flask_restful import abort
 
-from time import Time
+from timemodel import Time
 from eventdao import EventDAO
 
 
@@ -32,13 +32,14 @@ class Event:
 
     def serialize(self):
         event_dict = deepcopy(vars(self))
+        event_dict['days'] = list(event_dict['days'])
         event_dict['from_time'] = vars(event_dict['from_time'])
         event_dict['to_time'] = vars(event_dict['to_time'])
         return event_dict
 
     @classmethod
     def get(cls, event_name):
-        event_dict = dao.get(event_name)
+        event_dict = cls.dao.get(event_name)
         if event_dict is None:
             abort(404, message='Event {} not found'.format(event_name))
         return cls.fromdict(event_dict)
@@ -82,9 +83,7 @@ class Event:
 
     @classmethod
     def delete(cls, event_name):
-        event = cls.get(event_name)
         cls.dao.delete(event_name)
-        return event
 
 
 

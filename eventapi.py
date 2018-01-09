@@ -1,7 +1,11 @@
+import json
+from flask import request
 from flask_restful import Resource
 
-from app import read_args
 from event import Event
+
+def read_args(request):
+    return json.loads(request.data.decode('utf-8'))
 
 class EventAPI(Resource):
     # Returns event details in JSON format
@@ -24,5 +28,5 @@ class EventAPI(Resource):
 
     # Deletes the named event
     def delete(self, name):
-        event = Event.delete(name)
-        return event.serialize(), 204
+        Event.delete(name)
+        return name, 204

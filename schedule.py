@@ -14,7 +14,7 @@ class Schedule:
     @classmethod
     def fromdict(cls, sched_dict):
         owner = sched_dict['owner']
-        events = [Event.fromdict(e) for e in sched_dict['events']]
+        events = [Event.get(e) for e in sched_dict['events']]
         return cls(owner, events)
 
     def add_event(self, event):
@@ -23,7 +23,7 @@ class Schedule:
     def remove_event(self, event_name):
         self.events = {e for e in self.events if e.name != event_name}
 
-        def serialize(self):
+    def serialize(self):
         sched_dict = {'owner': self.owner}
         sched_dict['events'] = [e.serialize() for e in self.events]
         return sched_dict
@@ -36,10 +36,10 @@ class Schedule:
 
     @classmethod
     def get(cls, owner):
-        sched_dict = dao.get(owner)
+        sched_dict = cls.dao.get(owner)
         if sched_dict is None:
             abort(404, message='No schedule exists for {}'.format(owner))
-        return cls.fromdict(ched_dict)
+        return cls.fromdict(sched_dict)
 
     def update(self, event_name, action):
         if action == 'ADD':
@@ -49,5 +49,6 @@ class Schedule:
             self.remove_event(event_name)
         else:
             abort(404, message='Invalid action "{}"'.format(action))
+        self.dao.update(self)
         return self
 
