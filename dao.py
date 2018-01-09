@@ -12,12 +12,14 @@ class DAO:
     """
     Read Operations
     """
-    def _get_by_id(self, collection, id_str:str):
+    def _get_by_id(self, collection, id_str):
         return self.__db[collection].find_one({'_id': ObjectId(id_str)})
 
-    def _get_by_params(self, collection, selector):
-        # use find_many
+    def _get_many_by_params(self, collection, selector):
         return self.__db[collection].find(selector)
+
+    def _get_one_by_params(self, collection, selector):
+        return self.__db[collection].find_one(selector)
 
     """
     Write Operations

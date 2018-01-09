@@ -10,3 +10,6 @@ from scheduleapi import ScheduleAPI
 
 api.add_resource(EventAPI, '/event/<name>/')
 api.add_resource(ScheduleAPI, '/schedule/<owner>/')
+
+if __name__ == '__main__':
+    app.run(debug=True)

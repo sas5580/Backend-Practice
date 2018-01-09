@@ -9,10 +9,10 @@ def read_args(request):
     return json.loads(request.data.decode('utf-8'))
 
 def read_time(time_str):
-    return datetime.strptime(time_str, "%H:%M:%S").time()
+    return datetime.strptime(time_str, '%H:%M:%S').time()
 
 def validate_days(days):
-    if not set(event_dict['days']).issubset(DAYS):
+    if not set(days).issubset(DAYS):
         raise ValueError('Invalid day string(s) in list')
 
 class EventAPI(Resource):
@@ -28,12 +28,11 @@ class EventAPI(Resource):
             event_dict['name'] = name
             event_dict['from_time'] = read_time(event_dict['from_time'])
             event_dict['to_time'] = read_time(event_dict['to_time'])
-            if event_dict['from_time'] > event_dict['to_time']
+            if event_dict['from_time'] > event_dict['to_time']:
                 raise ValueError
             validate_days(event_dict['days'])
-        except:
-            abort(404, message='Invalid payload to create event')
-
+        except Exception as e:
+            abort(404, message='Invalid payload to create event: {}'.format(e))
         event = Event.create(event_dict)
         return event.serialize(), 201
 

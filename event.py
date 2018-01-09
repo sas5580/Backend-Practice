@@ -1,14 +1,13 @@
 from copy import deepcopy
-from datetime import time
+from datetime import datetime, time
 from flask_restful import abort
 
 from eventdao import EventDAO
 
 DAYS = set(('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))
 
-event = Model()
-
-return event.__dict__
+def read_time(time_str):
+    return datetime.strptime(time_str, '%H:%M:%S').time()
 
 class Event:
     dao = EventDAO()
@@ -17,8 +16,8 @@ class Event:
 
         self.name = documnet['name'] if 'name' in documnet else None
         self.days = documnet['days'] if 'days' in documnet else None
-        self.from_time = time(**documnet['from_time']) if 'from_time' in documnet else None
-        self.to_time = time(**documnet['to_time']) if 'to_time' in documnet else None
+        self.from_time = documnet['from_time'] if 'from_time' in documnet else None
+        self.to_time = documnet['to_time'] if 'to_time' in documnet else None
         self.description = documnet['description'] if 'description' in documnet else None
 
     def serialize(self):
@@ -32,7 +31,9 @@ class Event:
         event_dict = cls.dao.get(event_name)
         if event_dict is None:
             abort(404, message='Event {} not found'.format(event_name))
-        return cls.fromdict(event_dict)
+        event_dict['from_time'] = read_time(event_dict['from_time'])
+        event_dict['to_time'] = read_time(event_dict['to_time'])
+        return cls(event_dict)
 
     @classmethod
     def create(cls, event_dict):
@@ -41,7 +42,7 @@ class Event:
         return event
 
     def update(self, event_dict):
-        for prop, val in event_dict.iteritems():
+        for prop, val in event_dict.items():
             self.__dict__[prop] = val
 
         self.dao.update(self)
