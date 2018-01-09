@@ -16,14 +16,8 @@ Expected args:
         <string>,   // One or many of Sun, Mon, Tue, Wed, Thu, Fri, Sat
         ...
     ],
-    "from_time": {
-        "hour": <Int>
-        "minute": <Int>
-    },
-    "to_time": {
-        "hour": <Int>
-        "minute": <Int>
-    },
+    "from_time": "HH:MM:SS",
+    "to_time": "HH:MM:SS",
     "description": <string> // Optional
 }
 ```
@@ -36,14 +30,8 @@ Expected args: (Only include fields to update)
         <string>,   // One or many of Sun, Mon, Tue, Wed, Thu, Fri, Sat
         ...
     ],
-    "from_time": {
-        "hour": <Int>
-        "minute": <Int>
-    },
-    "to_time": {
-        "hour": <Int>
-        "minute": <Int>
-    },
+    "from_time": "HH:MM:SS",
+    "to_time": "HH:MM:SS",
     "description": <string>
 }
 ```
