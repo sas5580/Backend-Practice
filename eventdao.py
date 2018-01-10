@@ -4,9 +4,8 @@ from bson.objectid import ObjectId
 from dao import DAO
 
 class EventDAO(DAO):
-    def get_by_name(self, event_name):
-        res = self._get_by_params('event', {'name': event_name})
-        return res[0] if len(res) > 0 else None
+    def get(self, event_name=None):
+        return self._get_by_params('event', {'name': event_name} if event_name is not None else {})
 
     def get_by_id(self, id_str):
         return self._get_by_id('event', id_str)

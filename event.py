@@ -1,6 +1,5 @@
 from copy import deepcopy
 from datetime import datetime, time
-from flask_restful import abort
 
 from eventdao import EventDAO
 
@@ -19,29 +18,23 @@ class Event:
         self.description = document['description'] if 'description' in document else None
 
     @classmethod
-    def get_by_name(cls, event_name):
-        event_dict = cls.dao.get_by_name(event_name)
-        if event_dict is None:
-            abort(404, message='Event {} not found'.format(event_name))
-        return cls(event_dict)
+    def get(cls, event_name = None):
+        event_dicts = cls.dao.get(event_name)
+        if event_dicts is None:
+            return None
+        return [cls(e) for e in event_dicts]
 
     @classmethod
     def get_by_id(cls, id_str):
         event_dict = cls.dao.get_by_id(id_str)
         if event_dict is None:
-            abort(404, message='Event with id "{}" not found'.format(id_str))
+            return None
         return cls(event_dict)
-
-    @classmethod
-    def get_all(cls):
-        event_dicts = cls.dao.get_all()
-        return [cls(e) for e in event_dicts]
-
     @classmethod
     def create(cls, event_dict):
         event = cls(event_dict)
         e_id = cls.dao.create(event)
-        event.id = str(e_id)
+        event.id = e_id
         return event
 
     def update(self, event_dict):
@@ -52,4 +45,4 @@ class Event:
 
     @classmethod
     def delete(cls, e_id):
-        cls.dao.delete(e_id)
+        return cls.dao.delete(e_id)

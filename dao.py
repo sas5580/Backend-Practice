@@ -23,13 +23,13 @@ class DAO:
     def _save_one(self, collection, document):
         res = self.__db[collection].insert_one(document)
         if res.acknowledged:
-            return res.inserted_id
+            return str(res.inserted_id)
         return None
 
     def _save_many(self, collection, documents_list):
         res = self.__db[collection].insert_many(documents_list)
         if res.acknowledged:
-            return res.inserted_ids
+            return [str(_id) for _id in res.inserted_ids]
         return None
 
     def _update(self, collection, selector, updated_document, upsert=False):

@@ -1,11 +1,17 @@
-from dao import DAO
+from copy import deepcopy
+from bson.objectid import ObjectId
 
-from event import Event
+from dao import DAO
 
 class ScheduleDAO(DAO):
     def get(self, owner):
-        res = self._get_by_params('schedule', {'owner': owner})
-        return res[0] if len(res) > 0 else None
+        return self._get_by_params('schedule', {'owner': owner} if owner is not None else {})
 
-    def update(self, schedule):
-        return self._update('schedule',{'owner': schedule.owner}, {'events': schedule.events}, True)
+    def get_by_id(self, s_id):
+        return self._get_by_id('schedule', ObjectId(s_id))
+
+    def create(self, sched):
+        return self._save_one('schedule', deepcopy(vars(sched)))
+
+    def update(self, sched):
+        return self._update('schedule',{'owner': sched.owner}, {'events': sched.events}, True)
