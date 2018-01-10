@@ -13,11 +13,8 @@ class DAO:
     def _get_by_id(self, collection, id_str):
         return self.__db[collection].find_one({'_id': ObjectId(id_str)})
 
-    def _get_many_by_params(self, collection, selector):
-        return self.__db[collection].find(selector)
-
-    def _get_one_by_params(self, collection, selector):
-        return self.__db[collection].find_one(selector)
+    def _get_by_params(self, collection, selector):
+        return list(self.__db[collection].find(selector))
 
     """
     Write Operations
@@ -25,11 +22,15 @@ class DAO:
 
     def _save_one(self, collection, document):
         res = self.__db[collection].insert_one(document)
-        return res.acknowledged
+        if res.acknowledged:
+            return res.inserted_id
+        return None
 
     def _save_many(self, collection, documents_list):
         res = self.__db[collection].insert_many(documents_list)
-        return res.acknowledged
+        if res.acknowledged:
+            return res.inserted_ids
+        return None
 
     def _update(self, collection, selector, updated_document, upsert=False):
         res = self.__db[collection].update_many(selector, {'$set': updated_document}, upsert=upsert)

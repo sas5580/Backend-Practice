@@ -4,7 +4,8 @@ from event import Event
 
 class ScheduleDAO(DAO):
     def get(self, owner):
-        return self._get_one_by_params('schedule', {'owner': owner})
+        res = self._get_by_params('schedule', {'owner': owner})
+        return res[0] if len(res) > 0 else None
 
     def update(self, schedule):
-        return self._update('schedule',{'owner': schedule.owner}, {'events': list(map(str, schedule.events))}, True)
+        return self._update('schedule',{'owner': schedule.owner}, {'events': schedule.events}, True)

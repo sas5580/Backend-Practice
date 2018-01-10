@@ -19,16 +19,15 @@ class Schedule:
         return cls(sched_dict)
 
     def add_event(self, event_name):
-        e_id, event = Event.get(event_name)
-        if e_id not in self.events:
-            self.events.append(e_id)
+        event = Event.get_by_name(event_name)
+        if event.id not in self.events:
+            self.events.append(event.id)
         self.dao.update(self)
         return self
 
     def remove_event(self, event_name):
-        e_id, event = Event.get(event_name)
-        if e_id in self.events:
-            self.events.remove(e_id)
+        event = Event.get_by_name(event_name)
+        if event.id in self.events:
+            self.events.remove(event.id)
         self.dao.update(self)
         return self
-

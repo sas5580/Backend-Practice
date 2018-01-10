@@ -1,6 +1,6 @@
 web:
     build: .
-    command: gunicorn -b 0.0.0.0:5000 -w 2 -k gevent app:app
+    command: gunicorn -b 0.0.0.0:5000 -w 2 -k gevent --access-logfile - app:app
     ports:
         - "5000:5000"
     volumes:

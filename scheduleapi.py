@@ -40,4 +40,4 @@ class ScheduleAPI(Resource):
 
         sched.remove_event(data['event_name'])
 
-        return vars(sched), 204
+        return owner, 204

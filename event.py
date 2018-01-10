@@ -11,6 +11,7 @@ class Event:
     dao = EventDAO()
 
     def __init__(self, document: dict):
+        self.id = str(document['_id']) if '_id' in document else None
         self.name = document['name'] if 'name' in document else None
         self.days = document['days'] if 'days' in document else None
         self.from_time = document['from_time'] if 'from_time' in document else None
@@ -18,11 +19,11 @@ class Event:
         self.description = document['description'] if 'description' in document else None
 
     @classmethod
-    def get(cls, event_name):
-        event_dict = cls.dao.get(event_name)
+    def get_by_name(cls, event_name):
+        event_dict = cls.dao.get_by_name(event_name)
         if event_dict is None:
             abort(404, message='Event {} not found'.format(event_name))
-        return str(event_dict['_id']), cls(event_dict)
+        return cls(event_dict)
 
     @classmethod
     def get_by_id(cls, id_str):
@@ -32,19 +33,23 @@ class Event:
         return cls(event_dict)
 
     @classmethod
+    def get_all(cls):
+        event_dicts = cls.dao.get_all()
+        return [cls(e) for e in event_dicts]
+
+    @classmethod
     def create(cls, event_dict):
         event = cls(event_dict)
-        cls.dao.create(event)
+        e_id = cls.dao.create(event)
+        event.id = str(e_id)
         return event
 
     def update(self, event_dict):
         for prop, val in event_dict.items():
             self.__dict__[prop] = val
-
         self.dao.update(self)
-
         return self
 
     @classmethod
-    def delete(cls, event_name):
-        cls.dao.delete(event_name)
+    def delete(cls, e_id):
+        cls.dao.delete(e_id)
