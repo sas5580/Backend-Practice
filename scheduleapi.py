@@ -8,27 +8,36 @@ def read_args(request):
     return json.loads(request.data.decode('utf-8'))
 
 class ScheduleAPI(Resource):
-    # Return entire schedule with details info on events
     def get(self, owner):
         sched = Schedule.get(owner)
-        print(sched.events)
         if sched is None:
             abort(404, message='No schedule with owner {} exists'.format(owner))
-        return sched.serialize()
+        return vars(sched)
 
-    # Add or remove an event to/from a schedule based on args
     def put(self, owner):
         data = read_args(request)
-        if 'event_name' not in data:
-            abort(404, message='"event_name" field is required to update shcedule')
+
         sched = Schedule.get(owner)
         if sched is None:
             sched = Schedule({'owner': owner})
-        if data['action'] == 'ADD':
-            sched.add_event(data['event_name'])
-        elif data['action'] == 'REMOVE':
-            sched.remove_event(data['event_name'])
-        else:
-            abort(404, message='Invalid "action" field to update schedule')
 
-        return sched.serialize(), 201
+        if 'event_name' not in data:
+            abort(404, message='"event_name" field is required to add event to shcedule')
+
+        sched.add_event(data['event_name'])
+
+        return vars(sched), 201
+
+    def delete(self, owner):
+        data = read_args(request)
+
+        sched = Schedule.get(owner)
+        if sched is None:
+            abort(404, message='No schedule exists owned by {}'.format(owner))
+
+        if 'event_name' not in data:
+            abort(404, message='"event_name" field is required to remove event from shcedule')
+
+        sched.remove_event(data['event_name'])
+
+        return vars(sched), 204

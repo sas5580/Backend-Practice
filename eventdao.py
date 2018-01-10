@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from dao import DAO
 
 class EventDAO(DAO):
@@ -8,10 +10,10 @@ class EventDAO(DAO):
         return self._get_by_id('event', id_str)
 
     def create(self, event):
-        return self._save_one('event', event.serialize())
+        return self._save_one('event', deepcopy(vars(event)))
 
     def update(self, event):
-        return self._update('event', {'name': event.name}, event.serialize())
+        return self._update('event', {'name': event.name}, vars(event))
 
     def delete(self, event_name):
         return self._delete('event', {'name': event_name})

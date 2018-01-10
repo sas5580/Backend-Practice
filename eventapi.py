@@ -3,58 +3,46 @@ from datetime import datetime
 from flask import request
 from flask_restful import Resource, abort
 
-from event import Event, DAYS
+from event import Event
+from eventvalidations import *
 
 def read_args(request):
     return json.loads(request.data.decode('utf-8'))
 
-def read_time(time_str):
-    return datetime.strptime(time_str, '%H:%M:%S').time()
-
-def validate_days(days):
-    if not set(days).issubset(DAYS):
-        raise ValueError('Invalid day string(s) in list')
-
 class EventAPI(Resource):
-    # Returns event details in JSON format
     def get(self, name):
         e_id, event = Event.get(name)
-        return event.serialize()
+        return vars(event)
 
-    # Creates a new event based on args and name
     def post(self, name):
-        event_dict = read_args(request)
+        data = read_args(request)
         try:
-            event_dict['name'] = name
-            event_dict['from_time'] = read_time(event_dict['from_time'])
-            event_dict['to_time'] = read_time(event_dict['to_time'])
-            if event_dict['from_time'] > event_dict['to_time']:
-                raise ValueError
-            validate_days(event_dict['days'])
+            validate_times(data['from_time'], data['to_time'])
+            validate_days(data['days'])
+            data['name'] = name
+            event = Event.create(data)
+            return vars(event), 201
+
         except Exception as e:
             abort(404, message='Invalid payload to create event: {}'.format(e))
-        event = Event.create(event_dict)
-        return event.serialize(), 201
 
-    # Update exisiting event based on args
     def put(self, name):
         e_id, event = Event.get(name)
-        update_dict = read_args(request)
-
+        data = read_args(request)
         try:
-            if 'from_time' in update_dict:
-                update_dict['from_time'] = read_time(update_dict['from_time'])
-            if 'to_time' in update_dict:
-                update_dict['to_time'] = read_time(update_dict['to_time'])
-            if 'days' in update_dict:
-                validate_days(update_dict['days'])
-        except:
-            abort(404, message='Invalid payload to update event')
+            if 'from_time' in data:
+                read_time(data['from_time'])
+            if 'to_time' in data:
+                read_time(data['to_time'])
+            if 'days' in data:
+                validate_days(data['days'])
+            event.update(data)
+            validate_times(event.from_time, event.to_time)
+            return vars(event), 201
 
-        event.update(update_dict)
-        return event.serialize(), 201
+        except Exception as e:
+            abort(404, message='Invalid payload to update event: {}'.format(e))
 
-    # Deletes the named event
     def delete(self, name):
         Event.delete(name)
         return name, 204
