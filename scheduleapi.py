@@ -32,7 +32,11 @@ class ScheduleAPI(Resource):
         if 'event_id' not in data or not validateOId(data['event_id']):
             abort(404, message='"event_id" is missing or invalid')
 
-        sched.add_event(data['event_id'])
+        try:
+            res = sched.add_event(data['event_id'])
+        except Exception as e:
+            abort(500, message='Error addinge event to schedule: {}'.format(e))
+
         return vars(res), 201
 
     def delete(self, s_id):
@@ -45,7 +49,11 @@ class ScheduleAPI(Resource):
         if 'event_id' not in data or not validateOId(data['event_id']):
             abort(404, message='"event_id" is missing or invalid')
 
-        sched.remove_event(data['event_id'])
+        try:
+            res = sched.remove_event(data['event_id'])
+        except Exception as e:
+            abort(500, message='Error removing from schedule: {}'.format(e))
+
         return vars(res)
 
 class SchedulesAPI(Resource):
@@ -57,6 +65,9 @@ class SchedulesAPI(Resource):
         data = read_args(request)
         if 'owner' not in data:
             abort(404, message='"owner" field is required to create a schedule')
+        try:
+            sched = Schedule.create(data)
+        except Exception as e:
+            abort(500, message='Error creating schedule: {}'.format(e))
 
-        sched = Schedule.create(data)
         return vars(sched), 201

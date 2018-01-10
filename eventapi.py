@@ -30,14 +30,22 @@ class EventAPI(Resource):
         if event is None:
             abort(404, message='Event with id "{}" not found'.format(id_str))
 
-        event.update(data)
+        try:
+            event.update(data)
+        except Exception as e:
+            abort(500, 'Error updating event: {}'.format(e))
+
         return vars(event), 201
 
     def delete(self, e_id):
         if not validate_OId(e_id):
             abort(400, message='Invalid id')
-        if not Event.delete(e_id):
-            abort(404, messsage='Error deleting event with id {}'.format(e_id))
+
+        try:
+            Event.delete(e_id)
+        except Exception as e:
+            abort(500, 'Error deleting event: {}'.format(e))
+
         return e_id, 204
 
 class EventsAPI(Resource):
@@ -48,7 +56,11 @@ class EventsAPI(Resource):
         except Exception as e:
             abort(400, message='Invalid payload to create event: {}'.format(e))
 
-        event = Event.create(data)
+        try:
+            event = Event.create(data)
+        except Exception as e:
+            abort(500, message='Error creating event: {}'.format(e))
+
         return vars(event), 201
 
     def get(self):

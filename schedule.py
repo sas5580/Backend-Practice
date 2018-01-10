@@ -15,7 +15,7 @@ class Schedule:
     @classmethod
     def get(cls, owner=None):
         sched_dicts = cls.dao.get(owner)
-        if not isinstance(sched_dicts, dict)
+        if not isinstance(sched_dicts, list):
             return None
         return [cls(s) for s in sched_dicts]
 
