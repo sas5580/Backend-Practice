@@ -17,41 +17,35 @@ def get_or_abort(s_id):
 class ScheduleAPI(Resource):
     def get(self, s_id):
         if not validate_OId(s_id):
-            abort(404, message='Invalid id')
+            abort(400, message='Invalid id')
 
         sched = get_or_abort(s_id)
         return vars(sched)
 
     def put(self, s_id):
         if not validate_OId(s_id):
-            abort(404, message='Invalid id')
+            abort(400, message='Invalid id')
 
         data = read_args(request)
         sched = get_or_abort(s_id)
 
-        if 'event_name' not in data:
-            abort(404, message='"event_name" field is required to add event to shcedule')
+        if 'event_id' not in data or not validateOId(data['event_id']):
+            abort(404, message='"event_id" is missing or invalid')
 
-        res = sched.add_event(data['event_name'])
-        if res is None:
-            abort(404, message='Error adding event to schedule')
-
+        sched.add_event(data['event_id'])
         return vars(res), 201
 
     def delete(self, s_id):
         if not validate_OId(s_id):
-            abort(404, message='Invalid id')
+            abort(400, message='Invalid id')
 
         data = read_args(request)
         sched = get_or_abort(s_id)
 
-        if 'event_name' not in data:
-            abort(404, message='"event_name" field is required to remove event from shcedule')
+        if 'event_id' not in data or not validateOId(data['event_id']):
+            abort(404, message='"event_id" is missing or invalid')
 
-        res = sched.remove_event(data['event_name'])
-        if res is None:
-            abort(404, message='Error removing event from schedule')
-
+        sched.remove_event(data['event_id'])
         return vars(res)
 
 class SchedulesAPI(Resource):
@@ -65,5 +59,4 @@ class SchedulesAPI(Resource):
             abort(404, message='"owner" field is required to create a schedule')
 
         sched = Schedule.create(data)
-        print(vars(sched))
         return vars(sched), 201

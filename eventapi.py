@@ -13,7 +13,7 @@ def read_args(request):
 class EventAPI(Resource):
     def get(self, e_id):
         if not validate_OId(e_id):
-            abort(404, message='Invalid id')
+            abort(400, message='Invalid id')
         event = Event.get_by_id(e_id)
         if event is None:
             abort(404, message='Event with id "{}" not found'.format(id_str))
@@ -24,7 +24,7 @@ class EventAPI(Resource):
         try:
             validate_put(e_id, data)
         except Exception as e:
-            abort(404, message='Invalid payload to update event: {}'.format(e))
+            abort(400, message='Invalid payload to update event: {}'.format(e))
 
         event = Event.get_by_id(e_id)
         if event is None:
@@ -35,7 +35,7 @@ class EventAPI(Resource):
 
     def delete(self, e_id):
         if not validate_OId(e_id):
-            abort(404, message='Invalid id')
+            abort(400, message='Invalid id')
         if not Event.delete(e_id):
             abort(404, messsage='Error deleting event with id {}'.format(e_id))
         return e_id, 204
@@ -46,7 +46,7 @@ class EventsAPI(Resource):
         try:
             validate_post(data)
         except Exception as e:
-            abort(404, message='Invalid payload to create event: {}'.format(e))
+            abort(400, message='Invalid payload to create event: {}'.format(e))
 
         event = Event.create(data)
         return vars(event), 201

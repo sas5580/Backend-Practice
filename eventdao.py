@@ -5,7 +5,7 @@ from dao import DAO
 
 class EventDAO(DAO):
     def get(self, event_name=None):
-        return self._get_by_params('event', {'name': event_name} if event_name is not None else {})
+        return self._get_by_params('event', {'name': event_name} if event_name else {})
 
     def get_by_id(self, id_str):
         return self._get_by_id('event', id_str)
@@ -21,3 +21,6 @@ class EventDAO(DAO):
 
     def delete(self, e_id):
         return self._delete('event', {'_id': ObjectId(e_id)})
+
+    def count_id(self, e_id):
+        return self._count({'_id': ObjectId(e_id)})

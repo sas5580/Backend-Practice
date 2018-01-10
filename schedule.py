@@ -15,16 +15,14 @@ class Schedule:
     @classmethod
     def get(cls, owner=None):
         sched_dicts = cls.dao.get(owner)
-        if sched_dicts is None:
+        if not isinstance(sched_dicts, dict)
             return None
         return [cls(s) for s in sched_dicts]
 
     @classmethod
     def get_by_id(cls, s_id):
         sched_dict = cls.dao.get_by_id(s_id)
-        if sched_dict is None:
-            return None
-        return cls(sched_dict)
+        return cls(sched_dict) if sched_dict else None
 
     @classmethod
     def create(cls, sched_dict):
@@ -33,22 +31,14 @@ class Schedule:
         sched.id = s_id
         return sched
 
-    def add_event(self, event_name):
-        event = Event.get(event_name)
-        if len(event) < 1:
-            return None
-
-        if event[0].id not in self.events:
-            self.events.append(event[0].id)
-        self.dao.update(self)
+    def add_event(self, e_id):
+        if Event.exists(e_id) and e_id not in self.events:
+            self.events.append(event.id)
+            self.dao.update(self)
         return self
 
-    def remove_event(self, event_name):
-        event = Event.get(event_name)
-        if len(event) < 1:
-            return None
-
-        if event[0].id in self.events:
+    def remove_event(self, e_id):
+        if e_id in self.events:
             self.events.remove(event[0].id)
-        self.dao.update(self)
+            self.dao.update(self)
         return self

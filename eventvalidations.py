@@ -22,9 +22,5 @@ def validate_put(e_id, data):
     if not res: raise ValueError('Invalid Event PUT payload')
 
 def validate_post(data):
-    if not(
-        'name' in data and
-        validate_days(data['days']) and
-        validate_times(data['from_time'], data['to_time'])
-    ):
+    if not('name' in data and validate_days(data['days']) and validate_times(data['from_time'], data['to_time'])):
         raise ValueError('Invalid Event POST payload')

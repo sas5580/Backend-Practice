@@ -26,11 +26,8 @@ class DAO:
             return str(res.inserted_id)
         return None
 
-    def _save_many(self, collection, documents_list):
-        res = self.__db[collection].insert_many(documents_list)
-        if res.acknowledged:
-            return [str(_id) for _id in res.inserted_ids]
-        return None
+    def _count(self, collection, filter_doc):
+        return __db[collection].count(filter_doc)
 
     def _update(self, collection, selector, updated_document, upsert=False):
         res = self.__db[collection].update_many(selector, {'$set': updated_document}, upsert=upsert)

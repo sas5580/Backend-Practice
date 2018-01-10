@@ -18,6 +18,10 @@ class Event:
         self.description = document['description'] if 'description' in document else None
 
     @classmethod
+    def exists(cls, e_id):
+        return cls.dao.count_id(e_id) > 0:
+
+    @classmethod
     def get(cls, event_name = None):
         event_dicts = cls.dao.get(event_name)
         if event_dicts is None:
@@ -27,9 +31,8 @@ class Event:
     @classmethod
     def get_by_id(cls, id_str):
         event_dict = cls.dao.get_by_id(id_str)
-        if event_dict is None:
-            return None
-        return cls(event_dict)
+        return cls(event_dict) if event_dict else None
+
     @classmethod
     def create(cls, event_dict):
         event = cls(event_dict)
