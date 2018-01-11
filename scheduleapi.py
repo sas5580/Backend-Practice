@@ -8,6 +8,12 @@ from schedule import Schedule
 def read_args(request):
     return json.loads(request.data.decode('utf-8'))
 
+def create_resp(data, status_code=None):
+    resp = jsonify(data)
+    if status_code:
+        resp.status_code = status_code
+    return resp
+
 def get_or_abort(s_id):
     res = Schedule.get_by_id(s_id)
     if res is None:
@@ -20,7 +26,7 @@ class ScheduleAPI(Resource):
             abort(400, message='Invalid id')
 
         sched = get_or_abort(s_id)
-        return vars(sched)
+        return create_resp(vars(sched))
 
     def put(self, s_id):
         if not validate_OId(s_id):
@@ -37,7 +43,7 @@ class ScheduleAPI(Resource):
         except Exception as e:
             abort(500, message='Error addinge event to schedule: {}'.format(e))
 
-        return vars(res), 201
+        return create_resp(vars(res), 200)
 
     def delete(self, s_id):
         if not validate_OId(s_id):
@@ -54,7 +60,7 @@ class ScheduleAPI(Resource):
         except Exception as e:
             abort(500, message='Error removing from schedule: {}'.format(e))
 
-        return vars(res)
+        return create_resp(vars(res), 200)
 
 class SchedulesAPI(Resource):
     def get(self):
@@ -70,4 +76,4 @@ class SchedulesAPI(Resource):
         except Exception as e:
             abort(500, message='Error creating schedule: {}'.format(e))
 
-        return vars(sched), 201
+        return create_resp(vars(sched), 201)
