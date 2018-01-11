@@ -23,4 +23,4 @@ class EventDAO(DAO):
         return self._delete('event', {'_id': ObjectId(e_id)})
 
     def count_id(self, e_id):
-        return self._count({'_id': ObjectId(e_id)})
+        return self._count('event', {'_id': ObjectId(e_id)})

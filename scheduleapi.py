@@ -29,7 +29,7 @@ class ScheduleAPI(Resource):
         data = read_args(request)
         sched = get_or_abort(s_id)
 
-        if 'event_id' not in data or not validateOId(data['event_id']):
+        if 'event_id' not in data or not validate_OId(data['event_id']):
             abort(404, message='"event_id" is missing or invalid')
 
         try:
@@ -46,7 +46,7 @@ class ScheduleAPI(Resource):
         data = read_args(request)
         sched = get_or_abort(s_id)
 
-        if 'event_id' not in data or not validateOId(data['event_id']):
+        if 'event_id' not in data or not validate_OId(data['event_id']):
             abort(404, message='"event_id" is missing or invalid')
 
         try:
@@ -58,7 +58,7 @@ class ScheduleAPI(Resource):
 
 class SchedulesAPI(Resource):
     def get(self):
-        owner = request.args.get('name', default=None)
+        owner = request.args.get('owner', default=None)
         return [vars(s) for s in Schedule.get(owner)]
 
     def post(self):

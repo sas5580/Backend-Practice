@@ -27,7 +27,7 @@ class DAO:
         return None
 
     def _count(self, collection, filter_doc):
-        return __db[collection].count(filter_doc)
+        return self.__db[collection].count(filter_doc)
 
     def _update(self, collection, selector, updated_document, upsert=False):
         res = self.__db[collection].update_many(selector, {'$set': updated_document}, upsert=upsert)

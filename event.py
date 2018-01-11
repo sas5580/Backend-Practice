@@ -19,7 +19,7 @@ class Event:
 
     @classmethod
     def exists(cls, e_id):
-        return cls.dao.count_id(e_id) > 0:
+        return cls.dao.count_id(e_id) > 0
 
     @classmethod
     def get(cls, event_name = None):

@@ -33,12 +33,15 @@ class Schedule:
 
     def add_event(self, e_id):
         if Event.exists(e_id) and e_id not in self.events:
-            self.events.append(event.id)
+            self.events.append(e_id)
             self.dao.update(self)
         return self
 
     def remove_event(self, e_id):
         if e_id in self.events:
-            self.events.remove(event[0].id)
-            self.dao.update(self)
+            self.events.remove(e_id)
+            if self.events:
+                self.dao.update(self)
+            else:
+                self.dao.delete(self)
         return self
