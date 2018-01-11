@@ -22,16 +22,22 @@ class DAO:
 
     def _save_one(self, collection, document):
         res = self.__db[collection].insert_one(document)
-        if res.acknowledged:
-            return str(res.inserted_id)
-        return None
+        return str(res.inserted_id) if res.acknowledged else None
 
     def _count(self, collection, filter_doc):
         return self.__db[collection].count(filter_doc)
 
-    def _update(self, collection, selector, updated_document, upsert=False):
+    def _update(self, collection, selector, updated_document):
         res = self.__db[collection].update_many(selector, {'$set': updated_document}, upsert=upsert)
-        return res.acknowledged
+        return res.matched_count if res.acknowledged else 0
+
+    def _addToSet(self, collection, selector, push_document):
+        res = self.__db[collection].update_many(selector, {'$addToSet': push_document})
+        return res.matched_count if res.acknowledged else 0
+
+    def _pull(self, collection, selector, pull_document):
+        res = self.__db[collection].update_many(selector, {'$pull': pull_document})
+        return res.matched_count if res.acknowledged else 0
 
     def _delete(self, collection, selector):
         res = self.__db[collection].delete_many(selector)

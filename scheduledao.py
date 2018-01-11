@@ -10,11 +10,18 @@ class ScheduleDAO(DAO):
     def get_by_id(self, s_id):
         return self._get_by_id('schedule', s_id)
 
+    def events_empty(self, s_id):
+        print("HELLO: ", self._get_by_params('schedule', {'_id': ObjectId(s_id), 'events': {'$ne': []}}))
+        return not self._get_by_params('schedule', {'_id': ObjectId(s_id), 'events': {'$ne': []}})
+
     def create(self, sched):
         return self._save_one('schedule', deepcopy(vars(sched)))
 
-    def update(self, sched):
-        return self._update('schedule', {'_id': ObjectId(sched.id)}, {'events': sched.events})
+    def add_event(self, s_id, e_id):
+        return self._addToSet('schedule', {'_id': ObjectId(s_id)}, {'events': e_id})
 
-    def delete(self, sched):
-        return self._delete('schedule', {'_id': ObjectId(sched.id)})
+    def remove_event(self, s_id, e_id):
+        return self._pull('schedule', {'_id': ObjectId(s_id)}, {'events': e_id})
+
+    def delete(self, s_id):
+        return self._delete('schedule', {'_id': ObjectId(s_id)})
