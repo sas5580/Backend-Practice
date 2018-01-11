@@ -1,4 +1,4 @@
-from typing import Iterable
+from datetime import datetime
 from flask_restful import abort
 
 from scheduledao import ScheduleDAO
@@ -9,7 +9,9 @@ class Schedule:
 
     def __init__(self, document: dict):
         self.id = str(document['_id']) if '_id' in document else None
+        self.name = document['name'] if 'name' in document else None
         self.owner = document['owner'] if 'owner' in document else None
+        self.timestamp = document['timestamp'] if 'timestamp' in document else None
         self.events = document['events'] if 'events' in document else []
 
     @classmethod
@@ -25,6 +27,7 @@ class Schedule:
     @classmethod
     def create(cls, sched_dict):
         sched = cls(sched_dict)
+        sched.timestamp = datetime.now().isoformat()
         s_id = cls.dao.create(sched)
         sched.id = s_id
         return sched
@@ -38,6 +41,5 @@ class Schedule:
     def remove_event(cls, s_id, e_id):
         res = cls.dao.remove_event(s_id, e_id)
         if cls.dao.events_empty(s_id):
-            print("WORKED?")
             cls.dao.delete(s_id)
         return e_id if res > 0 else None
