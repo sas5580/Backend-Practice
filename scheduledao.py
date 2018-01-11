@@ -11,7 +11,6 @@ class ScheduleDAO(DAO):
         return self._get_by_id('schedule', s_id)
 
     def events_empty(self, s_id):
-        print("HELLO: ", self._get_by_params('schedule', {'_id': ObjectId(s_id), 'events': {'$ne': []}}))
         return not self._get_by_params('schedule', {'_id': ObjectId(s_id), 'events': {'$ne': []}})
 
     def create(self, sched):

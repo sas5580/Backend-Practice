@@ -29,7 +29,7 @@ class ScheduleAPI(Resource):
 
         return create_resp(vars(res))
 
-    def put(self, s_id):
+    def patch(self, s_id):
         if not validate_OId(s_id):
             abort(400, message='Invalid id')
 
@@ -42,12 +42,10 @@ class ScheduleAPI(Resource):
         except Exception as e:
             abort(500, message='Error addinge event to schedule: {}'.format(e))
 
-        if res == -1:
-            abort(404, message='No event found with id {}'.format(data['event_id']))
-        if res == 0:
+        if res is None:
             abort(404, message='No schedule found with id {}'.format(s_id))
 
-        return create_resp(s_id, 200)
+        return create_resp(res, 200)
 
     def delete(self, s_id):
         if not validate_OId(s_id):
@@ -62,10 +60,10 @@ class ScheduleAPI(Resource):
         except Exception as e:
             abort(500, message='Error removing from schedule: {}'.format(e))
 
-        if res < 1:
+        if res is None:
             abort(404, message='No schedule found with id {}'.format(s_id))
 
-        return create_resp(s_id, 204)
+        return create_resp(res, 204)
 
 class SchedulesAPI(Resource):
     def get(self):

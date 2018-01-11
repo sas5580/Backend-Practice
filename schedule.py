@@ -31,8 +31,8 @@ class Schedule:
 
     @classmethod
     def add_event(cls, s_id, e_id):
-        res = cls.dao.add_event(s_id, e_id) if Event.exists(e_id) else -1
-        return res
+        res = cls.dao.add_event(s_id, e_id)
+        return e_id if res > 0 else None
 
     @classmethod
     def remove_event(cls, s_id, e_id):
@@ -40,4 +40,4 @@ class Schedule:
         if cls.dao.events_empty(s_id):
             print("WORKED?")
             cls.dao.delete(s_id)
-        return res
+        return e_id if res > 0 else None
